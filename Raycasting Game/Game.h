@@ -1,11 +1,16 @@
 #pragma once
-#include <SFML/Graphics.hpp>
+#include"Global.h"
+#include"Map.h"
+#include"Player.h"
 
 class Game
 {
 private:
 	sf::RenderWindow* window;
 	sf::Event sfEvent;
+
+	Map* map;
+	Player* player;
 
 	float deltaTime;
 	sf::Clock dtClock;
