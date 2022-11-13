@@ -6,19 +6,19 @@
 Player::Player()
 {
 	this->coords = { 1.5f,5.0f };
-	this->direction = { 0.0f, -1.0f };
-	this->cameraPlane = { -0.66f, 0.0f };
+	this->direction = { -1.0f, 0.0f };
+	this->cameraPlane = { 0.0f, 0.66f };
 	this->velocity = {0.0f, 0.0f};
 
 	this->movementSpeed = 0.0f;
-	this->walkSpeed = 2.5f;
+	this->walkSpeed = 3.0f;
 	this->runSpeed = 4.5f;
 
 	this->rotationSpeed = 2.5f;
 	this->acceleration = 7.0f;
 }
 
-void Player::update(Map* map, float dTime)
+void Player::update(Map& map, float dTime)
 {
 	this->movement(map, dTime);
 }
@@ -32,25 +32,40 @@ void Player::render(sf::RenderTarget* target)
 	target->draw(player);
 }
 
-void Player::checkWallCollision(float dx, float dy, Map* map)
+sf::Vector2f Player::getDirection()
 {
-	if (!map->isWall(static_cast<int>(this->coords.x + dx), static_cast<int>(this->coords.y))) {
+	return this->direction;
+}
+
+sf::Vector2f Player::getCoords()
+{
+	return this->coords;
+}
+
+sf::Vector2f Player::getCameraPlane()
+{
+	return this->cameraPlane;
+}
+
+void Player::checkWallCollision(float dx, float dy, Map& map)
+{
+	if (!map.isWall(static_cast<int>(this->coords.x + dx), static_cast<int>(this->coords.y))) {
 		this->coords.x += dx;
 	}
-	if (!map->isWall(static_cast<int>(this->coords.x), static_cast<int>(this->coords.y + dy))) {
+	if (!map.isWall(static_cast<int>(this->coords.x), static_cast<int>(this->coords.y + dy))) {
 		this->coords.y += dy;
 	}
 
 }
 
-void Player::movement(Map* map, float dTime)
+void Player::movement(Map& map, float dTime)
 {
 	sf::Vector2f inputDirection = {0.0f, 0.0f};
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z) || sf::Keyboard::isKeyPressed(sf::Keyboard::Q) ||
 		sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 	{
-		inputDirection = {	static_cast<float>(sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) - static_cast<float>(sf::Keyboard::isKeyPressed(sf::Keyboard::D)),
+		inputDirection = {	static_cast<float>(sf::Keyboard::isKeyPressed(sf::Keyboard::D)) - static_cast<float>(sf::Keyboard::isKeyPressed(sf::Keyboard::Q)),
 										static_cast<float>(sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) - static_cast<float>(sf::Keyboard::isKeyPressed(sf::Keyboard::S))};
 
 		float norm = magnitude(inputDirection);
@@ -61,7 +76,7 @@ void Player::movement(Map* map, float dTime)
 			this->movementSpeed = this->runSpeed;
 		}
 		else{
-			this->movementSpeed = this->walkSpeed;
+			this->movementSpeed = this->walkSpeed; 
 		}
 	}
 	else {
@@ -80,12 +95,12 @@ void Player::movement(Map* map, float dTime)
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 	{
-		rotateVector(&this->cameraPlane, -this->rotationSpeed * dTime);
-		rotateVector(&this->direction, -this->rotationSpeed * dTime);
+		rotateVector(&this->cameraPlane, this->rotationSpeed * dTime);
+		rotateVector(&this->direction, this->rotationSpeed * dTime);
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 	{
-		rotateVector(&this->cameraPlane, this->rotationSpeed * dTime);
-		rotateVector(&this->direction, this->rotationSpeed * dTime);
+		rotateVector(&this->cameraPlane, -this->rotationSpeed * dTime);
+		rotateVector(&this->direction, -this->rotationSpeed * dTime);
 	}
 }

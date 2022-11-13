@@ -17,6 +17,7 @@ public:
 	virtual ~Map();    //destructor
 
 	bool isWall(int x, int y);
+	int getTile(int x, int y);
 
 	void update();
 	void render(sf::RenderTarget* target);

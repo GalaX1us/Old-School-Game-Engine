@@ -19,6 +19,11 @@ bool Map::isWall(int x, int y)
     return this->world_map.find(std::make_pair(x, y)) != this->world_map.end();
 }
 
+int Map::getTile(int x, int y)
+{
+    return this->miniMap[y][x];
+}
+
 void Map::initMap()
 {
     this->miniMap = {

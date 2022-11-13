@@ -2,6 +2,7 @@
 #include"Global.h"
 #include"Map.h"
 #include"Player.h"
+#include"RayCasting.h"
 
 class Game
 {
@@ -11,6 +12,7 @@ private:
 
 	Map* map;
 	Player* player;
+	RayCasting* rayCaster;
 
 	float deltaTime;
 	sf::Clock dtClock;

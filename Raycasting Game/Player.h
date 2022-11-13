@@ -18,12 +18,15 @@ private:
 	float rotationSpeed;
 
 
-	void movement(Map* map, float dTime);
-	void checkWallCollision(float dx, float dy, Map* map);
+	void movement(Map& map, float dTime);
+	void checkWallCollision(float dx, float dy, Map& map);
 public:
-	Player();             //constructor
+	Player();
 
-	void update(Map* map, float dTime);
+	sf::Vector2f getCoords();
+	sf::Vector2f getDirection();
+	sf::Vector2f getCameraPlane();
+	void update(Map& map, float dTime);
 	void render(sf::RenderTarget* target);
 };
 
