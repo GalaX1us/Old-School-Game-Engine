@@ -5,8 +5,8 @@
 Player::Player()
 {
 	this->coords = { 1.5f,5.0f };
-	this->angle = -1.57079632679f;
-	this->direction = {0, 0};
+	this->horizontalAngle = -1.57079632679f;
+	this->verticalAngle = 0;
 	this->velocity = {0.0f, 0.0f};
 
 	this->movementSpeed = 0.0f;
@@ -44,11 +44,16 @@ void Player::checkWallCollision(float dx, float dy, Map* map)
 
 void Player::movement(Map* map, float dTime)
 {
+	sf::Vector2f inputDirection = {0.0f, 0.0f};
+
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z) || sf::Keyboard::isKeyPressed(sf::Keyboard::Q) ||
 		sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 	{
-		this->direction = { static_cast<int>(sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) - static_cast<int>(sf::Keyboard::isKeyPressed(sf::Keyboard::D)),
-							static_cast<int>(sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) - static_cast<int>(sf::Keyboard::isKeyPressed(sf::Keyboard::S))};
+		inputDirection = {	static_cast<float>(sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) - static_cast<float>(sf::Keyboard::isKeyPressed(sf::Keyboard::D)),
+										static_cast<float>(sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) - static_cast<float>(sf::Keyboard::isKeyPressed(sf::Keyboard::S))};
+
+		float norm = std::sqrt(inputDirection.x * inputDirection.x + inputDirection.y * inputDirection.y);
+		if (norm) { inputDirection = inputDirection / norm; }
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
 		{
@@ -62,27 +67,22 @@ void Player::movement(Map* map, float dTime)
 		this->movementSpeed = 0;
 	}
 	
-	int nbKeys = abs(this->direction.x) + abs(this->direction.y);
+	this->velocity = {	std::lerp(this->velocity.x, this->movementSpeed*inputDirection.x, dTime * this->acceleration),
+						std::lerp(this->velocity.y, this->movementSpeed*inputDirection.y, dTime * this->acceleration)};
 
-	this->velocity = {	std::lerp(this->velocity.x, this->movementSpeed*this->direction.x, dTime * this->acceleration),
-						std::lerp(this->velocity.y, this->movementSpeed*this->direction.y, dTime * this->acceleration)};
-
-	float dx = (this->velocity.x * dTime * sin(this->angle)) + (this->velocity.y * dTime * cos(this->angle));
-	float dy = (this->velocity.x * dTime * -cos(this->angle)) + (this->velocity.y * dTime * sin(this->angle));
-
-	
-	if (nbKeys == 2) { dx /= sqrt2; dy /= sqrt2; }
+	float dx = (this->velocity.x * dTime * sin(this->horizontalAngle)) + (this->velocity.y * dTime * cos(this->horizontalAngle));
+	float dy = (this->velocity.x * dTime * -cos(this->horizontalAngle)) + (this->velocity.y * dTime * sin(this->horizontalAngle));
 	
 	this->checkWallCollision(dx, dy, map);
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 	{
-		this->angle -= rotationSpeed * dTime;
-		this->angle = fmod(this->angle, tau);
+		this->horizontalAngle -= rotationSpeed * dTime;
+		this->horizontalAngle = fmod(this->horizontalAngle, tau);
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 	{
-		this->angle += rotationSpeed * dTime;
-		this->angle = fmod(this->angle, tau);
+		this->horizontalAngle += rotationSpeed * dTime;
+		this->horizontalAngle = fmod(this->horizontalAngle, tau);
 	}
 }
