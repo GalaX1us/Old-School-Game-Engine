@@ -86,27 +86,19 @@ void RayCasting::castRays(Player& player, Map& map, sf::RenderTarget* target)
         sf::Color color;
         switch (map.getTile(mapCoords.x, mapCoords.y))
         {
-        case 1:  color = sf::Color::Red;    break; //red
+        case 1:  color = sf::Color(10,105,188,255);    break; //red
         case 2:  color = sf::Color::Green;  break; //green
-        case 3:  color = sf::Color::Blue;   break; //blue
+        case 3:  color = sf::Color::Red;   break; //blue
         case 4:  color = sf::Color::White;  break; //white
-        default: color = sf::Color::Yellow; break; //yellow
+        default: color = sf::Color::White; break; //yellow
         }
 
         //give x and y sides different brightness
         if (side == 1) { color.a /= 2; }
 
-        //draw the pixels of the stripe as a vertical line
-        /*sf::Vertex line[] =
-        {
-            sf::Vertex(sf::Vector2f((float)x*2.0f, (float)drawStart)),
-            sf::Vertex(sf::Vector2f((float)x*2.0f+1.0f, (float)drawEnd))
-        };
-
-        target->draw(line, 2, sf::Lines);*/
         sf::RectangleShape rectangle(sf::Vector2f(2.0f, (float)lineHeight));
-        rectangle.setPosition(sf::Vector2f(2.0f * (float)x, (float)drawStart));
+        rectangle.setFillColor(color);
+        rectangle.setPosition(sf::Vector2f(2.0f * x, (float)drawStart));
         target->draw(rectangle);
-
     }
 }

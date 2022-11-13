@@ -19,7 +19,7 @@ Game::~Game()
 void Game::initWindow()
 {
 	this->window = new sf::RenderWindow(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Blank Screen", sf::Style::Close);
-	this->window->setFramerateLimit(144);
+	this->window->setFramerateLimit(60);
 }
 
 void Game::updateDt()

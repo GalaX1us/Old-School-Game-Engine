@@ -7,7 +7,7 @@ Player::Player()
 {
 	this->coords = { 1.5f,5.0f };
 	this->direction = { -1.0f, 0.0f };
-	this->cameraPlane = { 0.0f, 0.66f };
+	this->cameraPlane = { 0.0f, -0.85f };
 	this->velocity = {0.0f, 0.0f};
 
 	this->movementSpeed = 0.0f;
@@ -15,7 +15,7 @@ Player::Player()
 	this->runSpeed = 4.5f;
 
 	this->rotationSpeed = 2.5f;
-	this->acceleration = 7.0f;
+	this->acceleration = 9.0f;
 }
 
 void Player::update(Map& map, float dTime)
@@ -95,12 +95,12 @@ void Player::movement(Map& map, float dTime)
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 	{
-		rotateVector(&this->cameraPlane, this->rotationSpeed * dTime);
-		rotateVector(&this->direction, this->rotationSpeed * dTime);
+		rotateVector(&this->cameraPlane, -this->rotationSpeed * dTime);
+		rotateVector(&this->direction, -this->rotationSpeed * dTime);
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 	{
-		rotateVector(&this->cameraPlane, -this->rotationSpeed * dTime);
-		rotateVector(&this->direction, -this->rotationSpeed * dTime);
+		rotateVector(&this->cameraPlane, this->rotationSpeed * dTime);
+		rotateVector(&this->direction, this->rotationSpeed * dTime);
 	}
 }
