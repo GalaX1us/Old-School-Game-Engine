@@ -1,12 +1,13 @@
 #include "Player.h"
 #include<math.h>
 #include<iostream>
+#include"VectorOperations.h"
 
 Player::Player()
 {
 	this->coords = { 1.5f,5.0f };
-	this->horizontalAngle = -1.57079632679f;
-	this->verticalAngle = 0;
+	this->direction = { 0.0f, -1.0f };
+	this->cameraPlane = { -0.66f, 0.0f };
 	this->velocity = {0.0f, 0.0f};
 
 	this->movementSpeed = 0.0f;
@@ -52,7 +53,7 @@ void Player::movement(Map* map, float dTime)
 		inputDirection = {	static_cast<float>(sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) - static_cast<float>(sf::Keyboard::isKeyPressed(sf::Keyboard::D)),
 										static_cast<float>(sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) - static_cast<float>(sf::Keyboard::isKeyPressed(sf::Keyboard::S))};
 
-		float norm = std::sqrt(inputDirection.x * inputDirection.x + inputDirection.y * inputDirection.y);
+		float norm = magnitude(inputDirection);
 		if (norm) { inputDirection = inputDirection / norm; }
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
@@ -70,19 +71,21 @@ void Player::movement(Map* map, float dTime)
 	this->velocity = {	std::lerp(this->velocity.x, this->movementSpeed*inputDirection.x, dTime * this->acceleration),
 						std::lerp(this->velocity.y, this->movementSpeed*inputDirection.y, dTime * this->acceleration)};
 
-	float dx = (this->velocity.x * dTime * sin(this->horizontalAngle)) + (this->velocity.y * dTime * cos(this->horizontalAngle));
-	float dy = (this->velocity.x * dTime * -cos(this->horizontalAngle)) + (this->velocity.y * dTime * sin(this->horizontalAngle));
+	float cameraPlaneMagn = magnitude(this->cameraPlane);
+
+	float dx = (this->velocity.x * dTime * this->cameraPlane.x / cameraPlaneMagn) + (this->velocity.y * dTime * this->direction.x);
+	float dy = (this->velocity.x * dTime * this->cameraPlane.y / cameraPlaneMagn) + (this->velocity.y * dTime * this->direction.y);
 	
 	this->checkWallCollision(dx, dy, map);
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 	{
-		this->horizontalAngle -= rotationSpeed * dTime;
-		this->horizontalAngle = fmod(this->horizontalAngle, tau);
+		rotateVector(&this->cameraPlane, -this->rotationSpeed * dTime);
+		rotateVector(&this->direction, -this->rotationSpeed * dTime);
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 	{
-		this->horizontalAngle += rotationSpeed * dTime;
-		this->horizontalAngle = fmod(this->horizontalAngle, tau);
+		rotateVector(&this->cameraPlane, this->rotationSpeed * dTime);
+		rotateVector(&this->direction, this->rotationSpeed * dTime);
 	}
 }
